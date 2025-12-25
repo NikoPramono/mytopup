@@ -1,0 +1,151 @@
+/* ---------------------------------------------
+    FONT GLOBAL: SPACE GROTESK (PENGGANTI INTER)
+---------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
+:root {
+  /* Variabel font baru */
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
+}
+
+/* Set global font ke Space Grotesk */
+* {
+  font-family: var(--font-space-grotesk);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------
+    BACKGROUND GLOBAL BARU: #F5F5F5
+---------------------------------------------- */
+@layer base {
+    /* Terapkan warna abu-abu F5F5F5 ke seluruh body */
+    body {
+        @apply bg-bg-page; 
+    }
+}
+
+/* ---------------------------------------------
+    TYPOGRAPHY (modern bold style)
+---------------------------------------------- */
+@layer components {
+  .heading-1 {
+    @apply text-[40px] leading-[48px] font-bold text-brand-dark;
+  }
+
+  .heading-2 {
+    @apply text-[32px] leading-[40px] font-semibold text-brand-dark;
+  }
+
+  .heading-3 {
+    @apply text-[24px] leading-[32px] font-semibold text-brand-dark;
+  }
+
+  .heading-4 {
+    @apply text-[18px] leading-[26px] font-medium text-brand-dark;
+  }
+
+  .text-body {
+    @apply text-[16px] leading-[24px] text-brand-dark;
+  }
+}
+
+/* ---------------------------------------------
+    CARD STYLE — shadow tebal + border hitam 2px
+---------------------------------------------- */
+@layer components {
+  /* CATATAN: Warna CARD BG (#F3F3F3) harus diterapkan di komponen React, BUKAN di sini. */
+  .card {
+    @apply border-2 border-brand-dark rounded-xl2 p-5
+           shadow-[4px_4px_0_0_#191A23] 
+           transition-all duration-300 ease-out;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-2 hover:shadow-[8px_8px_0_0_#191A23];
+  }
+}
+
+/* ---------------------------------------------
+    BUTTON STYLE — brand green highlight
+---------------------------------------------- */
+@layer components {
+  .btn-primary {
+    @apply bg-brand-green text-brand-dark font-semibold px-5 py-3 
+           border-2 border-brand-dark rounded-xl2
+           shadow-[4px_4px_0_0_#191A23]
+           transition-all duration-300;
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-1 shadow-[8px_8px_0_0_#191A23];
+  }
+}
+
+/* ---------------------------------------------
+    SWIPER GLOBAL FIX — agar slider tidak hilang
+---------------------------------------------- */
+.swiper {
+  width: 100%;
+  height: auto;
+  padding-bottom: 40px; /* Ruang untuk pagination */
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* ---------------------------------------------
+    DEFAULT PAGINATION (TAPI TIDAK MENIMPA PREMIUM PRICE)
+---------------------------------------------- */
+.swiper:not(.premium-price-swiper) .swiper-pagination-bullet {
+  background: #191A23 !important;
+  opacity: 0.4;
+}
+
+.swiper:not(.premium-price-swiper) .swiper-pagination-bullet-active {
+  background: #B9FF66 !important;
+  opacity: 1;
+}
+
+/* ---------------------------------------------
+    PREMIUM PRICE — CUSTOM PAGINATION SLIDER BAWAH
+---------------------------------------------- */
+.premium-pagination .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #D1D5DB !important;
+  opacity: 1;
+  margin: 0 3px;
+  transition: all 0.3s;
+}
+
+.premium-pagination .swiper-pagination-bullet-active {
+  width: 20px;
+  height: 8px;
+  border-radius: 8px;
+  background: #B9FF66 !important;
+}
+
+/* ============================================================
+   FINAL FIX: PREMIUM PRICE PAGINATION BIKINAN SWIPER NGAMBEK
+   ============================================================ */
+
+/* Pagination harus full width */
+.premium-pagination {
+  width: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 10px !important;
+}
+
+/* Dynamic bullets dari Swiper kasih left:-32px → wajib reset */
+.premium-pagination .swiper-pagination-bullet {
+  position: relative !important;
+  left: 0 !important;
+}
