@@ -1,13 +1,11 @@
-// src/components/admin/AdminRouteGuard.jsx
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const AdminRouteGuard = () => {
-    // Di aplikasi nyata, Anda akan memverifikasi token API
+    // Mengecek kunci spesifik untuk Admin
     const isAuthenticated = localStorage.getItem('isAdminLoggedIn') === 'true';
 
-    // Jika sudah terautentikasi, biarkan akses ke child routes (Dashboard, Orders, dll.)
-    // Jika belum, arahkan kembali ke halaman login
+    // Jika TRUE, tampilkan halaman (Outlet). Jika FALSE, ke login admin.
     return isAuthenticated ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
 

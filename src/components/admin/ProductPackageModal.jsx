@@ -1,98 +1,184 @@
-import React from 'react';
-import { X, DollarSign, Package, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Save, Plus, Trash2, Image as ImageIcon, Type } from 'lucide-react';
 
-// Format mata uang sederhana (kita asumsikan Anda memiliki formatCurrency di utils)
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0,
-    }).format(amount);
-};
+export default function ProductEditFormModal({ product, onClose, onSave }) {
+    const [formData, setFormData] = useState({
+        id: '',
+        name: '',
+        type: '',
+        image: '',
+        packages: []
+    });
 
-export default function ProductPackageModal({ product, onClose }) {
-    if (!product) return null;
+    // Sinkronisasi data saat modal dibuka
+    useEffect(() => {
+        if (product) {
+            setFormData({
+                ...product,
+                packages: product.packages || product.currencies || []
+            });
+        } else {
+            // Jika tambah produk baru (handleEdit(null))
+            setFormData({
+                id: Date.now().toString(),
+                name: '',
+                type: 'Games',
+                image: '',
+                packages: []
+            });
+        }
+    }, [product]);
 
-    const packages = product.packages || [];
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handlePackageChange = (index, field, value) => {
+        const updatedPackages = [...formData.packages];
+        updatedPackages[index][field] = value;
+        setFormData(prev => ({ ...prev, packages: updatedPackages }));
+    };
+
+    const addPackage = () => {
+        setFormData(prev => ({
+            ...prev,
+            packages: [...prev.packages, { label: '', price: 0, cost: 0 }]
+        }));
+    };
+
+    const removePackage = (index) => {
+        const updated = formData.packages.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, packages: updated }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(formData);
+    };
 
     return (
-        <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
-            onClick={onClose} // Menutup jika klik di luar modal
-        >
-            <div 
-                className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 opacity-100"
-                onClick={(e) => e.stopPropagation()} // Mencegah penutupan saat klik di dalam modal
-            >
-                {/* Header Modal */}
-                <div className="sticky top-0 bg-white p-6 border-b flex justify-between items-center z-10">
-                    <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                        <Package className="w-6 h-6 mr-3 text-blue-600" />
-                        Detail Paket: {product.name}
-                    </h3>
-                    <button 
-                        onClick={onClose}
-                        className="p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
-                        title="Tutup"
-                    >
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 font-primary" onClick={onClose}>
+            <div className="relative w-full max-w-3xl transform transition-all" onClick={e => e.stopPropagation()}>
+                {/* Layer Shadow Belakang */}
+                <div className="absolute inset-0 bg-black translate-x-3 translate-y-3 rounded-2xl"></div>
 
-                {/* Konten Modal */}
-                <div className="p-6">
-                    {packages.length === 0 ? (
-                        <div className="text-center py-10 text-gray-500 border border-dashed rounded-lg bg-gray-50">
-                            <Zap className="w-8 h-8 mx-auto mb-3 text-red-500" />
-                            <p className="font-semibold">Tidak ada paket terdaftar untuk produk ini.</p>
-                            <p className="text-sm">Gunakan tombol Edit di tabel untuk menambahkan paket baru.</p>
+                {/* Kontainer Utama */}
+                <form onSubmit={handleSubmit} className="relative bg-white border-4 border-black rounded-2xl flex flex-col max-h-[90vh] overflow-hidden">
+                    
+                    {/* Header */}
+                    <div className="bg-blue-400 border-b-4 border-black p-6 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white border-2 border-black p-2 shadow-[2px_2px_0_0_#000]">
+                                <Type className="w-6 h-6 text-black" />
+                            </div>
+                            <h3 className="text-xl font-black uppercase italic tracking-tighter">
+                                {product ? 'Edit Produk' : 'Tambah Produk Baru'}
+                            </h3>
                         </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-blue-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-blue-800 uppercase tracking-wider">Nama Paket / Detail</th>
-                                        <th className="px-6 py-3 text-right text-xs font-bold text-blue-800 uppercase tracking-wider">Harga Beli (Modal)</th>
-                                        <th className="px-6 py-3 text-right text-xs font-bold text-blue-800 uppercase tracking-wider">Harga Jual</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-100">
-                                    {packages.map((pkg, index) => (
-                                        <tr key={index} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {pkg.name || `Paket #${index + 1}`}
-                                                <p className="text-xs text-gray-500 mt-1">{pkg.description || `(Tipe: ${product.type})`}</p>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-700">
-                                                <span className="text-red-500">{formatCurrency(pkg.cost || 0)}</span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-green-600">
-                                                {formatCurrency(pkg.price || 0)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+                        <button type="button" onClick={onClose} className="bg-white border-2 border-black p-1 hover:bg-red-400 shadow-[2px_2px_0_0_#000]">
+                            <X size={24} />
+                        </button>
+                    </div>
 
-                {/* Footer Modal (Opsional) */}
-                <div className="sticky bottom-0 bg-gray-50 p-4 border-t flex justify-end gap-3">
-                    <button 
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
-                    >
-                        Tutup
-                    </button>
-                    <button 
-                        onClick={() => alert(`Simulasi: Navigasi ke Halaman Edit Produk untuk ${product.name}`)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center"
-                    >
-                        <Edit className="w-4 h-4 mr-2" /> Edit Semua Paket
-                    </button>
-                </div>
+                    {/* Konten Form */}
+                    <div className="p-6 overflow-y-auto space-y-6 bg-gray-50">
+                        {/* Informasi Dasar */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-black uppercase">Nama Produk</label>
+                                <input 
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full border-4 border-black p-3 font-bold focus:bg-blue-50 outline-none"
+                                    placeholder="Contoh: Mobile Legends"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-black uppercase">URL Gambar</label>
+                                <div className="flex gap-2">
+                                    <input 
+                                        name="image"
+                                        value={formData.image}
+                                        onChange={handleChange}
+                                        className="flex-1 border-4 border-black p-3 font-bold focus:bg-blue-50 outline-none text-xs"
+                                        placeholder="/assets/GamePopuler/ml.jpeg"
+                                    />
+                                    <div className="w-12 h-12 border-4 border-black bg-white flex items-center justify-center shrink-0">
+                                        {formData.image ? <img src={formData.image} alt="prev" className="w-full h-full object-cover" /> : <ImageIcon size={20} />}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Pengaturan Paket */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b-4 border-black pb-2">
+                                <h4 className="font-black uppercase italic tracking-tight">Daftar Paket / Harga</h4>
+                                <button 
+                                    type="button"
+                                    onClick={addPackage}
+                                    className="bg-[#B9FF66] border-2 border-black px-3 py-1 text-xs font-black uppercase shadow-[2px_2px_0_0_#000] active:translate-y-0.5 active:shadow-none"
+                                >
+                                    + Tambah Baris
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {formData.packages.map((pkg, index) => (
+                                    <div key={index} className="flex flex-col md:flex-row gap-3 bg-white border-2 border-black p-3 shadow-[4px_4px_0_0_#000]">
+                                        <input 
+                                            placeholder="Nama Paket (ex: 86 Diamonds)"
+                                            className="flex-1 border-2 border-black p-2 text-sm font-bold outline-none"
+                                            value={pkg.label || pkg.name || ''}
+                                            onChange={(e) => handlePackageChange(index, 'label', e.target.value)}
+                                        />
+                                        <input 
+                                            type="number"
+                                            placeholder="Modal"
+                                            className="w-full md:w-32 border-2 border-black p-2 text-sm outline-none"
+                                            value={pkg.cost || 0}
+                                            onChange={(e) => handlePackageChange(index, 'cost', e.target.value)}
+                                        />
+                                        <input 
+                                            type="number"
+                                            placeholder="Harga Jual"
+                                            className="w-full md:w-32 border-2 border-black p-2 text-sm font-black bg-green-50 outline-none"
+                                            value={pkg.price || 0}
+                                            onChange={(e) => handlePackageChange(index, 'price', e.target.value)}
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => removePackage(index)}
+                                            className="bg-red-500 text-white p-2 border-2 border-black hover:bg-red-600"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Tombol */}
+                    <div className="p-6 border-t-4 border-black bg-white flex gap-4">
+                        <button 
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-3 border-4 border-black font-black uppercase text-sm shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+                        >
+                            Batal
+                        </button>
+                        <button 
+                            type="submit"
+                            className="flex-1 py-3 bg-[#B9FF66] border-4 border-black font-black uppercase text-sm shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+                        >
+                            <Save size={20} /> Simpan Produk
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );

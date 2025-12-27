@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { X, Save, Package } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { X, Save, Package, Info } from 'lucide-react';
 
 export default function ProductEditFormModal({ product, onClose, onSave }) {
-    // State lokal untuk simulasi data yang akan diedit
+    // State lokal untuk simulasi data
     const [name, setName] = useState(product ? product.name : 'Produk Baru');
     const [packagesCount, setPackagesCount] = useState(product ? (product.packages?.length || 0) : 0);
     
-    // Asumsi: Kita hanya mengedit nama dan jumlah paket untuk simulasi
-    
+    if (!product) return null;
+
     const handleSave = () => {
-        // Logika simulasi penyimpanan
         const updatedProduct = {
             ...product,
             name: name,
-            // Simulasi: paket tidak benar-benar diubah, hanya jumlahnya
+            // Simulasi paket
             packages: Array.from({ length: packagesCount }, (_, i) => ({ 
                 id: i + 1, 
                 name: `Paket Edit ${i + 1}`, 
@@ -22,72 +20,98 @@ export default function ProductEditFormModal({ product, onClose, onSave }) {
                 price: 2000 * (i + 1)
             }))
         };
-        
-        // Panggil fungsi onSave yang diteruskan dari AdminProducts.jsx
-        // Ini akan menutup modal dan menampilkan toast sukses di induk
         onSave(updatedProduct); 
     };
 
-    if (!product) return null;
-
     return (
         <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 font-primary text-[#191A23]"
             onClick={onClose}
         >
-            <div 
-                className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto transform transition-all duration-300"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Header Modal */}
-                <div className="sticky top-0 bg-white p-6 border-b flex justify-between items-center z-10">
-                    <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                        <Package className="w-6 h-6 mr-3 text-red-600" />
-                        Edit Produk: {product.name}
-                    </h3>
-                    <button onClick={onClose} className="p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition">
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
+            <div className="relative w-full max-w-lg transform">
+                {/* Layer Bayangan Kaku (Neo-Brutalism) */}
+                <div className="absolute inset-0 bg-black translate-x-3 translate-y-3 rounded-2xl"></div>
 
-                {/* Konten Form */}
-                <div className="p-6 space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
+                {/* Kontainer Modal */}
+                <div 
+                    className="relative bg-white border-4 border-black rounded-2xl overflow-hidden flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {/* Header Modal - Menggunakan warna Kuning/Merah Branding */}
+                    <div className="bg-[#FF5C00] text-white border-b-4 border-black p-6 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white border-2 border-black p-2 rotate-[-3deg] shadow-[2px_2px_0_0_#000]">
+                                <Package className="w-6 h-6 text-black" />
+                            </div>
+                            <h3 className="text-xl font-black uppercase italic tracking-tighter">
+                                Edit: {product.name}
+                            </h3>
+                        </div>
+                        <button 
+                            onClick={onClose} 
+                            className="bg-white text-black border-2 border-black p-1 hover:bg-black hover:text-white transition-colors"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Simulasi Jumlah Paket</label>
-                        <input
-                            type="number"
-                            value={packagesCount}
-                            onChange={(e) => setPackagesCount(parseInt(e.target.value) || 0)}
-                            min="0"
-                            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Mengubah nilai ini akan memperbarui jumlah paket di modal detail.</p>
+                    {/* Konten Form */}
+                    <div className="p-6 space-y-6 bg-[#F3F3F3]">
+                        {/* Input Nama */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest italic">Nama Produk</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full border-4 border-black rounded-xl p-3 font-bold focus:bg-[#B9FF66] transition-colors outline-none shadow-[2px_2px_0_0_#000]"
+                            />
+                        </div>
+
+                        {/* Input Jumlah Paket */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest italic">Jumlah Paket (Simulasi)</label>
+                            <input
+                                type="number"
+                                value={packagesCount}
+                                onChange={(e) => setPackagesCount(parseInt(e.target.value) || 0)}
+                                min="0"
+                                className="w-full border-4 border-black rounded-xl p-3 font-bold focus:bg-[#B9FF66] transition-colors outline-none shadow-[2px_2px_0_0_#000]"
+                            />
+                            <p className="text-[10px] font-bold text-gray-500 uppercase italic">
+                                *Mengubah ini akan meng-generate otomatis paket baru di detail.
+                            </p>
+                        </div>
+
+                        {/* Box Info - Neo Brutalism Style */}
+                        <div className="p-4 bg-white border-4 border-black rounded-xl shadow-[4px_4px_0_0_#000] flex gap-3 items-start">
+                            <div className="bg-blue-400 border-2 border-black p-1">
+                                <Info size={16} className="text-white" />
+                            </div>
+                            <div>
+                                <p className="font-black text-[11px] uppercase underline decoration-blue-400">Mode Simulasi</p>
+                                <p className="text-[10px] font-bold text-gray-600 leading-tight mt-1">
+                                    Ini adalah form demo. Di sistem asli, Anda akan melihat editor tabel per item paket.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800 rounded-lg">
-                        <p className="font-semibold">Simulasi Data</p>
-                        <p className="text-sm">Dalam aplikasi nyata, ini adalah tempat form lengkap (termasuk editor tabel untuk setiap paket) berada.</p>
+                    {/* Footer Modal */}
+                    <div className="p-6 border-t-4 border-black bg-white flex gap-3">
+                        <button 
+                            onClick={onClose}
+                            className="flex-1 py-3 border-4 border-black font-black uppercase text-sm shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+                        >
+                            Batal
+                        </button>
+                        <button 
+                            onClick={handleSave}
+                            className="flex-1 py-3 bg-[#B9FF66] border-4 border-black font-black uppercase text-sm shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+                        >
+                            <Save className="w-4 h-4" /> Simpan Perubahan
+                        </button>
                     </div>
-                </div>
-
-                {/* Footer Modal */}
-                <div className="p-4 border-t bg-gray-50 flex justify-end">
-                    <button 
-                        onClick={handleSave}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center"
-                    >
-                        <Save className="w-4 h-4 mr-2" /> Simpan Perubahan
-                    </button>
                 </div>
             </div>
         </div>
