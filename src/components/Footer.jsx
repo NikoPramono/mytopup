@@ -23,9 +23,9 @@ export default function Footer() {
           <div className="flex flex-wrap justify-start md:justify-end items-center gap-3 md:gap-6 pt-4 md:pt-0">
             <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/tentang-kami">Tentang Kami</Link>
             <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/layanan-kami">Layanan Kami</Link>
-            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/layanan-kami">Syarat & Ketentuan</Link>
-            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/layanan-kami">Kebijakan Privasi</Link>
-            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/layanan-kami">Partnership</Link>
+            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/syarat-ketentuan">Syarat & Ketentuan</Link>
+            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/kebijakan-privasi">Kebijakan Privasi</Link>
+            <Link className="whitespace-nowrap border-b-2 border-[#b9ff66] transition" to="/partnership">Partnership</Link>
           </div>
         </div>
 

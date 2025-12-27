@@ -19,6 +19,9 @@ import OrderDetail from "./pages/OrderDetail";
 import Tracking from "./pages/Tracking";
 import TentangKami from "./pages/TentangKami";
 import LayananKami from "./pages/LayananKami";
+import SyaratKetentuan from "./pages/SyaratKetentuan";
+import KebijakanPrivasi from "./pages/KebijakanPrivasi";
+import Partnership from "./pages/Partnership";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserAccountSettings from "./pages/UserAccountSettings"; 
@@ -76,9 +79,12 @@ function App() {
           <Route path="/orders/:id" element={<OrderDetail />} />
           <Route path="/tracking/:id" element={<Tracking />} />
           <Route path="/layanan-kami" element={<LayananKami />} />
+          <Route path="/tentang-kami" element={<TentangKami />} />
+          <Route path="/syarat-ketentuan" element={<SyaratKetentuan />} />
+          <Route path="/kebijakan-privasi" element={<KebijakanPrivasi />} />
+          <Route path="/partnership" element={<Partnership />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/tentang-kami" element={<TentangKami />} />
         </Route>
           
         {/* ------------------ RUTE ADMIN ------------------ */}
