@@ -236,9 +236,9 @@ export default function LayananKami() {
           <h2 className="text-3xl font-bold mb-6">Hubungi Kami</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: FiPhone, title: "Telepon", desc: "123-456-7890" },
-              { icon: FiMail, title: "Email", desc: "info@email.com" },
-              { icon: FiMapPin, title: "Alamat", desc: "Jalan Utama I No.1A Kota Sembarang" },
+              { icon: FiPhone, title: "Telepon", desc: "08971727707" },
+              { icon: FiMail, title: "Email", desc: "ptkodenusateknobuana@gmail.com" },
+              { icon: FiMapPin, title: "Alamat", desc: "Next Office, Menara Palma Lantai 22 Unit 22 - 06, JL.H.R Rasuna Said Kavling VI No.9 Blok X2, Kuningan Timur, Kec. Setiabudi, Jakarta Selatan, 12950" },
             ].map((item, idx) => (
               <div
                 key={idx}
