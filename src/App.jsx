@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import Swal from 'sweetalert2'; // Pastikan install: npm install sweetalert2
 
 // --- IMPORT HELPER SCROLL ---
 import ScrollToTop from "./components/ScrollToTop"; 
@@ -41,10 +42,43 @@ function App() {
   const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
-    // Memulai pembaruan status pesanan otomatis
+    // 1. Memulai pembaruan status pesanan otomatis
     startOrderAutoUpdate();
+
+    // 2. LOGIKA NOTIFIKASI PEMBAYARAN MIDTRANS
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+
+    if (status === 'success') {
+      Swal.fire({
+        title: 'Pembayaran Berhasil!',
+        text: 'Saldo Anda akan segera ditambahkan secara otomatis.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Oke, Terima Kasih'
+      });
+    } else if (status === 'pending') {
+      Swal.fire({
+        title: 'Menunggu Pembayaran',
+        text: 'Silakan selesaikan pembayaran sesuai instruksi di aplikasi.',
+        icon: 'info',
+        confirmButtonText: 'Tutup'
+      });
+    } else if (status === 'error') {
+      Swal.fire({
+        title: 'Pembayaran Gagal',
+        text: 'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.',
+        icon: 'error',
+        confirmButtonText: 'Coba Lagi'
+      });
+    }
+
+    // Menghapus parameter dari URL agar alert tidak muncul lagi saat di-refresh (F5)
+    if (status) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
     
-    // Logika tombol Scroll To Top (Tombol manual di pojok kanan bawah)
+    // 3. Logika tombol Scroll To Top
     const handleScroll = () => setShowScroll(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -56,22 +90,15 @@ function App() {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col relative">
-      
-      {/* MENGATASI HALAMAN DIMULAI DARI BAWAH:
-         Komponen ini akan otomatis menjalankan window.scrollTo(0,0) 
-         setiap kali rute/halaman berubah.
-      */}
       <ScrollToTop />
 
       <Routes>
-        
-        {/* ------------------ RUTE PUBLIK (DIBUNGKUS PUBLIC LAYOUT) ------------------ */}
+        {/* RUTE PUBLIK */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<GameGrid />} />
           <Route path="/product/:slug" element={<ProductDetail />} /> 
           <Route path="/game/:slug" element={<GameDetail />} />
           <Route path="/premium/:slug" element={<PremiumDetail />} />
-          
           <Route path="/profile" element={<UserAccountSettings />} /> 
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<Success />} />
@@ -87,21 +114,18 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
           
-        {/* ------------------ RUTE ADMIN ------------------ */}
+        {/* RUTE ADMIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
-
         <Route element={<AdminRouteGuard />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/products" element={<AdminProducts />} />
         </Route>
 
-        {/* ------------------ RUTE FALLBACK ------------------ */}
+        {/* RUTE FALLBACK */}
         <Route path="*" element={<NotFound />} /> 
-        
       </Routes>
 
-      {/* Tombol Back To Top Manual */}
       <button
         onClick={scrollToTopManual}
         className={`fixed bottom-8 right-8 p-3 rounded-full shadow-lg text-black 
